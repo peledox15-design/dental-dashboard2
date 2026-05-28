@@ -1,272 +1,423 @@
-export default function DentalRecordsDashboard() {
-  const patients = [
+import { useState } from "react";
+
+export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [records, setRecords] = useState([
     {
       id: 1,
-      name: "Maria Santos",
-      age: 29,
-      treatment: "Root Canal",
-      appointment: "2026-05-28",
-      status: "Ongoing",
+      patient: "Maria Santos",
+      doctor: "Dr. Cruz",
+      procedure: "Root Canal",
+      billing: 8500,
+      status: "Paid",
     },
     {
       id: 2,
-      name: "John Reyes",
-      age: 34,
-      treatment: "Teeth Cleaning",
-      appointment: "2026-05-30",
-      status: "Completed",
+      patient: "John Reyes",
+      doctor: "Dr. Garcia",
+      procedure: "Tooth Extraction",
+      billing: 3500,
+      status: "Pending",
     },
-    {
-      id: 3,
-      name: "Angela Cruz",
-      age: 22,
-      treatment: "Braces Consultation",
-      appointment: "2026-06-02",
-      status: "Scheduled",
-    },
-  ];
+  ]);
+
+  const [form, setForm] = useState({
+    patient: "",
+    doctor: "",
+    procedure: "",
+    billing: "",
+    status: "Pending",
+  });
+
+  const login = () => {
+    if (username === "admin" && password === "1234") {
+      setLoggedIn(true);
+    } else {
+      alert("Invalid login");
+    }
+  };
+
+  const addRecord = () => {
+    if (
+      !form.patient ||
+      !form.doctor ||
+      !form.procedure ||
+      !form.billing
+    ) {
+      alert("Complete all fields");
+      return;
+    }
+
+    setRecords([
+      ...records,
+      {
+        id: records.length + 1,
+        ...form,
+        billing: Number(form.billing),
+      },
+    ]);
+
+    setForm({
+      patient: "",
+      doctor: "",
+      procedure: "",
+      billing: "",
+      status: "Pending",
+    });
+  };
+
+  if (!loggedIn) {
+    return (
+      <div style={styles.loginPage}>
+        <div style={styles.loginCard}>
+          <div style={styles.logo}>🦷</div>
+
+          <h1 style={styles.title}>Dental Clinic System</h1>
+
+          <p style={styles.subtitle}>
+            Secure Patient Record Management
+          </p>
+
+          <input
+            style={styles.input}
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+
+          <input
+            style={styles.input}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button style={styles.button} onClick={login}>
+            Login
+          </button>
+
+          <p style={styles.demo}>
+            Demo: admin / 1234
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div style={styles.page}>
+      <div style={styles.sidebar}>
+        <h2 style={{ color: "white" }}>🦷 DentalSys</h2>
 
-        {/* Login Panel */}
-        <div className="bg-white rounded-3xl shadow-xl p-6 lg:col-span-1">
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
-              D
-            </div>
+        <div style={styles.menu}>
+          <p>Dashboard</p>
+          <p>Patients</p>
+          <p>Billing</p>
+          <p>Procedures</p>
+        </div>
 
-            <h1 className="text-2xl font-bold mt-4">DentalCare</h1>
-            <p className="text-gray-500 text-sm">
-              Clinic Management System
+        <button
+          style={styles.logout}
+          onClick={() => setLoggedIn(false)}
+        >
+          Logout
+        </button>
+      </div>
+
+      <div style={styles.content}>
+        <div style={styles.header}>
+          <div>
+            <h1>Dental Dashboard</h1>
+            <p style={{ color: "#64748b" }}>
+              Manage clinic records professionally
             </p>
-          </div>
-
-          <form className="space-y-4">
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                Username
-              </label>
-
-              <input
-                type="text"
-                placeholder="Enter username"
-                className="w-full mt-1 px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                Password
-              </label>
-
-              <input
-                type="password"
-                placeholder="Enter password"
-                className="w-full mt-1 px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-
-            <button
-              type="button"
-              className="w-full bg-blue-500 hover:bg-blue-600 transition text-white py-3 rounded-2xl font-semibold shadow-md"
-            >
-              Log In
-            </button>
-          </form>
-
-          <div className="mt-8 border-t pt-4">
-            <h2 className="font-semibold text-gray-800 mb-3">
-              System Features
-            </h2>
-
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li>• Patient dental records</li>
-              <li>• Appointment tracking</li>
-              <li>• Treatment history</li>
-              <li>• Dashboard analytics</li>
-              <li>• Secure login access</li>
-            </ul>
           </div>
         </div>
 
-        {/* Dashboard */}
-        <div className="lg:col-span-3 space-y-6">
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-            <div className="bg-white rounded-3xl p-6 shadow-lg">
-              <p className="text-gray-500 text-sm">Total Patients</p>
-              <h2 className="text-4xl font-bold mt-2">245</h2>
-            </div>
-
-            <div className="bg-white rounded-3xl p-6 shadow-lg">
-              <p className="text-gray-500 text-sm">
-                Appointments Today
-              </p>
-              <h2 className="text-4xl font-bold mt-2">18</h2>
-            </div>
-
-            <div className="bg-white rounded-3xl p-6 shadow-lg">
-              <p className="text-gray-500 text-sm">
-                Pending Treatments
-              </p>
-              <h2 className="text-4xl font-bold mt-2">7</h2>
-            </div>
-
+        <div style={styles.cards}>
+          <div style={styles.card}>
+            <h3>Total Patients</h3>
+            <h1>{records.length}</h1>
           </div>
 
-          {/* Patient Records */}
-          <div className="bg-white rounded-3xl shadow-xl p-6">
+          <div style={styles.card}>
+            <h3>Total Revenue</h3>
+            <h1>
+              ₱
+              {records
+                .reduce((sum, item) => sum + item.billing, 0)
+                .toLocaleString()}
+            </h1>
+          </div>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div style={styles.card}>
+            <h3>Pending Payments</h3>
+            <h1>
+              {
+                records.filter(
+                  (item) => item.status === "Pending"
+                ).length
+              }
+            </h1>
+          </div>
+        </div>
 
-              <div>
-                <h2 className="text-2xl font-bold">
-                  Patient Dental Records
-                </h2>
+        <div style={styles.formCard}>
+          <h2>Add Patient Record</h2>
 
-                <p className="text-gray-500 text-sm">
-                  Manage patient information and treatment history
-                </p>
-              </div>
+          <div style={styles.formGrid}>
+            <input
+              style={styles.input}
+              placeholder="Patient Name"
+              value={form.patient}
+              onChange={(e) =>
+                setForm({ ...form, patient: e.target.value })
+              }
+            />
 
-              <button className="bg-green-500 hover:bg-green-600 transition text-white px-5 py-3 rounded-2xl font-medium">
-                + Add Patient
-              </button>
-            </div>
+            <input
+              style={styles.input}
+              placeholder="Doctor Name"
+              value={form.doctor}
+              onChange={(e) =>
+                setForm({ ...form, doctor: e.target.value })
+              }
+            />
 
-            <div className="overflow-x-auto">
+            <input
+              style={styles.input}
+              placeholder="Procedure"
+              value={form.procedure}
+              onChange={(e) =>
+                setForm({ ...form, procedure: e.target.value })
+              }
+            />
 
-              <table className="w-full border-collapse">
+            <input
+              style={styles.input}
+              type="number"
+              placeholder="Billing"
+              value={form.billing}
+              onChange={(e) =>
+                setForm({ ...form, billing: e.target.value })
+              }
+            />
+          </div>
 
-                <thead>
-                  <tr className="bg-slate-100 text-left">
-                    <th className="p-4 rounded-l-2xl">
-                      Patient Name
-                    </th>
+          <button style={styles.button} onClick={addRecord}>
+            Add Record
+          </button>
+        </div>
 
-                    <th className="p-4">Age</th>
+        <div style={styles.tableCard}>
+          <h2>Patient Records</h2>
 
-                    <th className="p-4">Treatment</th>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Patient</th>
+                <th style={styles.th}>Doctor</th>
+                <th style={styles.th}>Procedure</th>
+                <th style={styles.th}>Billing</th>
+                <th style={styles.th}>Status</th>
+              </tr>
+            </thead>
 
-                    <th className="p-4">Appointment</th>
+            <tbody>
+              {records.map((record) => (
+                <tr key={record.id}>
+                  <td style={styles.td}>{record.patient}</td>
+                  <td style={styles.td}>{record.doctor}</td>
+                  <td style={styles.td}>{record.procedure}</td>
+                  <td style={styles.td}>
+                    ₱{record.billing.toLocaleString()}
+                  </td>
 
-                    <th className="p-4 rounded-r-2xl">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {patients.map((patient) => (
-                    <tr
-                      key={patient.id}
-                      className="border-b hover:bg-slate-50 transition"
+                  <td style={styles.td}>
+                    <span
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "20px",
+                        background:
+                          record.status === "Paid"
+                            ? "#dcfce7"
+                            : "#fef3c7",
+                        color:
+                          record.status === "Paid"
+                            ? "#166534"
+                            : "#92400e",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                      }}
                     >
-                      <td className="p-4 font-medium">
-                        {patient.name}
-                      </td>
-
-                      <td className="p-4">{patient.age}</td>
-
-                      <td className="p-4">
-                        {patient.treatment}
-                      </td>
-
-                      <td className="p-4">
-                        {patient.appointment}
-                      </td>
-
-                      <td className="p-4">
-
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            patient.status === "Completed"
-                              ? "bg-green-100 text-green-700"
-                              : patient.status === "Ongoing"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-blue-100 text-blue-700"
-                          }`}
-                        >
-                          {patient.status}
-                        </span>
-
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
-
-            </div>
-          </div>
-
-          {/* Recent Activities */}
-          <div className="bg-white rounded-3xl shadow-xl p-6">
-
-            <h2 className="text-2xl font-bold mb-4">
-              Recent Activities
-            </h2>
-
-            <div className="space-y-4">
-
-              <div className="flex items-center justify-between bg-slate-50 rounded-2xl p-4">
-                <div>
-                  <p className="font-medium">
-                    Patient record updated
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    Maria Santos - Root Canal
-                  </p>
-                </div>
-
-                <span className="text-sm text-gray-400">
-                  10 mins ago
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between bg-slate-50 rounded-2xl p-4">
-                <div>
-                  <p className="font-medium">
-                    New appointment booked
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    Angela Cruz - Consultation
-                  </p>
-                </div>
-
-                <span className="text-sm text-gray-400">
-                  25 mins ago
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between bg-slate-50 rounded-2xl p-4">
-                <div>
-                  <p className="font-medium">
-                    Treatment completed
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    John Reyes - Cleaning
-                  </p>
-                </div>
-
-                <span className="text-sm text-gray-400">
-                  1 hour ago
-                </span>
-              </div>
-
-            </div>
-          </div>
-
+                      {record.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  page: {
+    display: "flex",
+    minHeight: "100vh",
+    background: "#f1f5f9",
+    fontFamily: "Arial",
+  },
+
+  sidebar: {
+    width: "240px",
+    background: "#0f172a",
+    padding: "30px 20px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+
+  menu: {
+    color: "#cbd5e1",
+    lineHeight: "40px",
+    marginTop: "40px",
+  },
+
+  logout: {
+    padding: "12px",
+    border: "none",
+    borderRadius: "10px",
+    background: "#ef4444",
+    color: "white",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+
+  content: {
+    flex: 1,
+    padding: "30px",
+  },
+
+  header: {
+    marginBottom: "30px",
+  },
+
+  cards: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+    gap: "20px",
+    marginBottom: "30px",
+  },
+
+  card: {
+    background: "white",
+    padding: "25px",
+    borderRadius: "18px",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.05)",
+  },
+
+  formCard: {
+    background: "white",
+    padding: "25px",
+    borderRadius: "18px",
+    marginBottom: "30px",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.05)",
+  },
+
+  tableCard: {
+    background: "white",
+    padding: "25px",
+    borderRadius: "18px",
+    overflowX: "auto",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.05)",
+  },
+
+  formGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
+    gap: "15px",
+    marginBottom: "20px",
+  },
+
+  input: {
+    padding: "14px",
+    borderRadius: "10px",
+    border: "1px solid #cbd5e1",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+
+  button: {
+    padding: "14px 20px",
+    background: "#2563eb",
+    border: "none",
+    color: "white",
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    marginTop: "20px",
+  },
+
+  th: {
+    textAlign: "left",
+    padding: "14px",
+    background: "#e2e8f0",
+  },
+
+  td: {
+    padding: "14px",
+    borderBottom: "1px solid #e2e8f0",
+  },
+
+  loginPage: {
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#e2e8f0",
+  },
+
+  loginCard: {
+    background: "white",
+    padding: "40px",
+    borderRadius: "20px",
+    width: "100%",
+    maxWidth: "420px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+  },
+
+  logo: {
+    fontSize: "60px",
+    textAlign: "center",
+  },
+
+  title: {
+    textAlign: "center",
+    marginTop: "10px",
+  },
+
+  subtitle: {
+    textAlign: "center",
+    color: "#64748b",
+    marginBottom: "30px",
+  },
+
+  demo: {
+    marginTop: "20px",
+    textAlign: "center",
+    color: "#64748b",
+  },
+};
